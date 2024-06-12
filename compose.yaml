@@ -1,0 +1,32 @@
+version: '3'
+services:
+  gsplat-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gsplat-dev-container
+    environment:
+      - DISPLAY=${DISPLAY}
+    image: gsplat:1.0
+    # user: 1010:1010 #terada
+    volumes:
+      # - /etc/passwd:/etc/passwd:ro
+      # - /etc/group:/etc/group:ro
+      - .:/root/gaussian-splatting
+      - ~/dataset/tandt_db:/root/dataset/tandt_db
+      - ~/.ssh:/root/.ssh
+      # X11 forwarding
+      - ~/.Xauthority:/root/.Xauthority
+      # ports:
+      #   - "8087:8088"
+    working_dir: /root/gaussian-splatting
+    tty: true
+    network_mode: "host"
+    # host gpu を使えるようにする設定　https://docs.docker.jp/compose/gpu-support.html
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
